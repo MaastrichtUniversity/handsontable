@@ -1,0 +1,5 @@
+name = Handsontable
+dependencies[] = xml_forms
+description = Adding handsontable support to Islandora XML forms
+version = dev
+core = 7.x

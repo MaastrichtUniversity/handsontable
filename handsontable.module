@@ -1,0 +1,66 @@
+<?php
+
+/**
+ * Implements hook_help().
+ *
+ * Displays help and module information.
+ *
+ * @param path
+ *   Which path of the site we're using to display help
+ * @param arg
+ *   Array that holds the current path as returned from arg() function
+ * @return string
+ */
+function handsontable_help($path) {
+  switch ($path) {
+    case "admin/help#handsontable":
+      return '<p>' . t("Adding handsontable form element to Drupal") . '</p>';
+      break;
+  }
+  return '';
+}
+
+/**
+ * Implements hook_element_info()
+ *
+ * Adds the handsontable element to the form elements
+ */
+function handsontable_element_info() {
+  $types['handsontable'] = array(
+    '#input' => TRUE,
+    '#process' => array('handsontable_tag_process'),
+    '#theme' => 'handsontable',
+    '#element_validate' => array('handsontable_field_validate'),
+  );
+  return $types;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function handsontable_theme($existing, $type, $theme, $path) {
+  return [
+    'handsontable' => [
+      'render element' => 'element',
+      'file' => 'handsontable.inc',
+    ],
+  ];
+}
+
+/**
+ * Generate a handsontable tag
+ */
+function handsontable_tag_process($element, &$form_state, $complete_form) {
+  form_load_include($form_state, 'inc', 'handsontable', 'handsontable');
+  return Handsontable::Process($element, $form_state, $complete_form);
+}
+
+/**
+ * Validation function for the new form element
+ */
+function handsontable_field_validate($element, &$form_state) {
+  // TODO: Need to validate user input
+  if ($element['#value'] == 'test') {
+    form_error($element, t('MUST NOT HAVE THE WORD TEST'));
+  }
+}
