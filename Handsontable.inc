@@ -37,13 +37,20 @@ class Handsontable {
   public static function process(array $element, array &$form_state, array $form = NULL) {
     self::addRequiredResources($form_state);
 
+    $children = array_intersect_key($element, array_flip(element_children($element)));
+    $handsontable_rows = array_filter($children, ['self', 'FilterChildren']);
+
+    if ( count($handsontable_rows) === 0 ) {
+      drupal_set_message(t('Attempted to create handsontable %name without defining a handsontable_row.', array('%name' => $element['#name'])), 'error');
+      return $element;
+    }
+
     // Config JS
     $element['#attached']['js'] = [
       drupal_get_path('module', 'handsontable') . '/js/handsontable_field.config.js'
     ];
 
     // Determine already set values
-
     $values = [];
     foreach (element_children($element) as $key) {
       $values[$key] = [];
@@ -58,9 +65,7 @@ class Handsontable {
     }
 
     // Discover columns
-
-    // TODO: Add error handling, see for example tabspanel
-    $children = array_intersect_key($element[0], array_flip(element_children($element[0])));
+    $children = array_intersect_key($handsontable_rows[0], array_flip(element_children($handsontable_rows[0])));
 
     $colHeaders = [];
     $columns = [];
@@ -83,13 +88,14 @@ class Handsontable {
       'type' => 'setting',
     ];
 
+    // Add AJAX callback
     $element['addRow'] = self::createChangeCallback($element, $form);
 
     return $element;
   }
 
   /**
-   * Creates an AJAX callback button that allows change number of handsontable rows.
+   * Creates an invisible AJAX callback button that allows change number of handsontable rows.
    *
    * @param array $element
    *   The handsontable form element.
@@ -111,6 +117,20 @@ class Handsontable {
       'method' => 'settings'
     );
     return $add;
+  }
+
+  /**
+   * Checks if a child element has the 'handsontable_row' #type.
+   *
+   * @param array $child
+   *   The child to determine.
+   *
+   * @return bool
+   *   TRUE if it is a tabpanel, FALSE otherwise.
+   */
+  public static function FilterChildren(array $child) {
+    $ret = ($child['#type'] == 'handsontable_row') ? TRUE : FALSE;
+    return $ret;
   }
 }
 
