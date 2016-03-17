@@ -1,5 +1,7 @@
 <?php
 
+module_load_include('inc', 'objective_forms', 'Form');
+
 /**
  * Implements hook_help().
  *
@@ -29,38 +31,79 @@ function handsontable_element_info() {
   $types['handsontable'] = array(
     '#input' => TRUE,
     '#process' => array('handsontable_tag_process'),
-    '#theme' => 'handsontable',
-    '#element_validate' => array('handsontable_field_validate'),
+    '#theme_wrappers' => array('handsontable', 'form_element'),
+  );
+
+  $types['handsontable_row'] = array(
+    '#input' => TRUE,
+    '#process' => array('handsontable_row_tag_process'),
+    '#theme' => array('handsontable_row'),
   );
   return $types;
 }
 
 /**
  * Implements hook_theme().
+ * @param $existing
+ * @param $type
+ * @param $theme
+ * @param $path
+ * @return array
  */
 function handsontable_theme($existing, $type, $theme, $path) {
   return [
     'handsontable' => [
       'render element' => 'element',
-      'file' => 'handsontable.inc',
+      'file' => 'Handsontable.inc',
+    ],
+    'handsontable_row' => [
+      'render element' => 'element',
+      'file' => 'HandsontableRow.inc',
     ],
   ];
 }
 
 /**
- * Generate a handsontable tag
+ * Process a handsontable tag
  */
 function handsontable_tag_process($element, &$form_state, $complete_form) {
-  form_load_include($form_state, 'inc', 'handsontable', 'handsontable');
+  form_load_include($form_state, 'inc', 'handsontable', 'Handsontable');
   return Handsontable::Process($element, $form_state, $complete_form);
 }
 
 /**
- * Validation function for the new form element
+ * Process a handsontable row tag
  */
-function handsontable_field_validate($element, &$form_state) {
-  // TODO: Need to validate user input
-  if ($element['#value'] == 'test') {
-    form_error($element, t('MUST NOT HAVE THE WORD TEST'));
+function handsontable_row_tag_process($element, &$form_state, $complete_form) {
+  form_load_include($form_state, 'inc', 'handsontable', 'HandsontableRow');
+  return HandsontableRow::Process($element, $form_state, $complete_form);
+}
+
+
+/**
+ * This function is triggered from objective_forms Form::ajaxAlter() from the addRow callback
+ *
+ * @param FormElement $element
+ * @param array $form
+ * @param array $form_state
+ * @return bool
+ */
+function handsontable_form_element_handsontable_ajax_alter(FormElement $element, array &$form, array &$form_state) {
+
+  // Either remove or
+  if (count($form_state['values'][$element->getIndex()]) > count($element->children) + 1) {
+    do {
+      $new = clone $element->children[0];
+      $element->adopt($new);
+      $form[] = $new->toArray();
+    } while (count($form_state['values'][$element->getIndex()]) > count($element->children) + 1);
   }
+  elseif (count($form_state['values'][$element->getIndex()]) < count($element->children) + 1) {
+    do {
+      $element->orphan();
+      unset($form[count($element->children)]);
+    } while (count($form_state['values'][$element->getIndex()]) < count($element->children) + 1);
+  }
+
+  return TRUE;
 }
