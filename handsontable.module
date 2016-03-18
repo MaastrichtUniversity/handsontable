@@ -68,7 +68,7 @@ function handsontable_theme($existing, $type, $theme, $path) {
  */
 function handsontable_tag_process($element, &$form_state, $complete_form) {
   form_load_include($form_state, 'inc', 'handsontable', 'Handsontable');
-  return Handsontable::Process($element, $form_state, $complete_form);
+  return Handsontable::process($element, $form_state, $complete_form);
 }
 
 /**
@@ -76,7 +76,7 @@ function handsontable_tag_process($element, &$form_state, $complete_form) {
  */
 function handsontable_row_tag_process($element, &$form_state, $complete_form) {
   form_load_include($form_state, 'inc', 'handsontable', 'HandsontableRow');
-  return HandsontableRow::Process($element, $form_state, $complete_form);
+  return HandsontableRow::process($element, $form_state, $complete_form);
 }
 
 
@@ -90,19 +90,30 @@ function handsontable_row_tag_process($element, &$form_state, $complete_form) {
  */
 function handsontable_form_element_handsontable_ajax_alter(FormElement $element, array &$form, array &$form_state) {
 
-  // Either remove or
-  if (count($form_state['values'][$element->getIndex()]) > count($element->children) + 1) {
+  // Either remove or add rows
+  $rows = $form_state['values'][$element->getIndex()]['rows'] - 1;
+  $children = count($element->children);
+
+  $diff = $rows - $children;
+
+  if ( $diff > 0 ) {
     do {
       $new = clone $element->children[0];
       $element->adopt($new);
       $form[] = $new->toArray();
-    } while (count($form_state['values'][$element->getIndex()]) > count($element->children) + 1);
+
+      $diff--;
+    } while ( $diff > 0);
   }
-  elseif (count($form_state['values'][$element->getIndex()]) < count($element->children) + 1) {
+  elseif ($diff < 0) {
     do {
-      $element->orphan();
+      // TODO: The removal of rows is only called 
+      $last = end($element->children);
+      $last->orphan();
       unset($form[count($element->children)]);
-    } while (count($form_state['values'][$element->getIndex()]) < count($element->children) + 1);
+
+      $diff++;
+    } while ( $diff < 0);
   }
 
   return TRUE;

@@ -9,7 +9,7 @@ Drupal.behaviors.handsontable = {
 
             jQuery(data).each(function (row) {
                 jQuery(columns).each(function (columnId, column) {
-                    if (data[row][columnId] != null && data[row][columnId] != "") {
+                    if (data[row][columnId] != null) {
                         jQuery(container).append(
                             jQuery("<input type='hidden' name='" + name + "[" + row + "][" + column.name + "]'>").val(data[row][columnId])
                         )
@@ -19,8 +19,10 @@ Drupal.behaviors.handsontable = {
         }
 
         // Trigger AJAX callback
-        function triggerCallback(container) {
-            jQuery(container + '-callback')
+        function triggerCallback(name, container, table) {
+            jQuery(container + "-rows input")
+                .val(jQuery(table).handsontable('countRows'));
+            jQuery(container + "-callback")
                 .trigger("mousedown")
         }
 
@@ -87,7 +89,7 @@ Drupal.behaviors.handsontable = {
 
                         // Ignore the change made by the loading of data
                         if (source != "loadData") {
-                            triggerCallback(container)
+                            triggerCallback(name, container, table)
                         }
                     }
                 });

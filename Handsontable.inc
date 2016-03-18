@@ -96,6 +96,14 @@ class Handsontable {
     // Add AJAX callback
     $element['addRow'] = self::createChangeCallback($element, $form);
 
+    // This hidden input will contain the number of handsontable rows
+    // This is used in the AJAX callback
+    $element['rows'] = [
+      '#type' => 'hidden',
+      '#prefix' => '<div id="' . $element['#id'] . '-rows">',
+      '#suffix' => '</div>'
+    ];
+
     return $element;
   }
 
