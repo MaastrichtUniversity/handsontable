@@ -56,7 +56,8 @@ class Handsontable {
       $values[$key] = [];
       foreach (element_children($element[$key]) as $subKey) {
         if (isset($element[$key][$subKey]['#default_value'])) {
-          $values[$key][$subKey] = $element[$key][$subKey]['#default_value'];
+          // TODO: We probably have to handle order of columns here
+          $values[$key][] = $element[$key][$subKey]['#default_value'];
         }
         else {
           $values[$key][$subKey] = NULL;
@@ -71,7 +72,11 @@ class Handsontable {
     $columns = [];
     foreach ($children as $name => $child) {
       $colHeaders[] = $child['#title'];
-      $columns[] = $name;
+      $columns[] = [
+        'name' => $name,
+        'type' => isset($child['#autocomplete_path']) ? 'autocomplete' : 'text',
+        'path' => isset($child['#autocomplete_path']) ? $child['#autocomplete_path'] : null
+      ];
     }
 
     // Pass settings
@@ -79,7 +84,7 @@ class Handsontable {
       'data' => [
         'handsontable' => [
           'names' => [$element['#name']],
-          'data' => [json_encode($values)],
+          'data' => [$values],
           'colHeaders' => [$colHeaders],
           'columns' => [$columns],
           'startRows' => [$element['#rows']]

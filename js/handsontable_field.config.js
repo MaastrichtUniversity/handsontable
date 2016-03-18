@@ -24,6 +24,43 @@ Drupal.behaviors.handsontable = {
                 .trigger("mousedown")
         }
 
+        function columnAutocomplete(query, process, path) {
+            jQuery.ajax({
+                url: settings.basePath + path + "/" + query,
+                dataType: 'json',
+                success: function (response) {
+                    // Drupal sends autocomplete in array of objects, handsontable expects array
+                    var array = [];
+                    jQuery.each(response, function(value, index) {
+                        array.push(value);
+                    });
+                    process(array);
+                }
+            });
+        }
+
+        function buildColumns(columns) {
+            var r = [];
+
+            jQuery(columns).each(function(i, column) {
+                s = {
+                    'type': column.type
+                };
+
+                if (s.type == 'autocomplete') {
+                    s.source = function(query, process) {
+                        columnAutocomplete(query, process, column.path)
+                    };
+
+                    s.strict = true;
+                }
+
+                r.push(s);
+            });
+
+            return r;
+        }
+
         // Initiate handsontable and add constructor options.
         jQuery.each(settings.handsontable.names, function (i, name) {
             var container = '#edit-' + name,
@@ -31,7 +68,7 @@ Drupal.behaviors.handsontable = {
 
             jQuery(table, context).once('processed', function () {
                 jQuery(table).handsontable({
-                    data: JSON.parse(settings.handsontable.data[i]),
+                    data: settings.handsontable.data[i],
                     minSpareRows: 1,
                     startCols: settings.handsontable.colHeaders[i].length,
                     startRows: settings.handsontable.startRows[i],
@@ -43,6 +80,7 @@ Drupal.behaviors.handsontable = {
                     allowRemoveColumn: false,
                     outsideClickDeselects: false,
                     persistentState: true,
+                    columns: buildColumns(settings.handsontable.columns[i]),
                     afterChange: function (changes, source) {
                         var columns = settings.handsontable.columns[i];
                         updateTable(name, table, container, columns);
