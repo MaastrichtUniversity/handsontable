@@ -8,10 +8,10 @@ Drupal.behaviors.handsontable = {
             jQuery(container).empty();
 
             jQuery(data).each(function (row) {
-                jQuery(columns).each(function (column, columnName) {
-                    if (data[row][column] != null && data[row][column] != "") {
+                jQuery(columns).each(function (columnId, column) {
+                    if (data[row][columnId] != null && data[row][columnId] != "") {
                         jQuery(container).append(
-                            jQuery("<input type='hidden' name='" + name + "[" + row + "][" + columnName + "]'>").val(data[row][column])
+                            jQuery("<input type='hidden' name='" + name + "[" + row + "][" + column.name + "]'>").val(data[row][columnId])
                         )
                     }
                 });
