@@ -120,7 +120,10 @@ class Handsontable {
    */
   protected static function createChangeCallback(array &$element, array &$complete_form) {
     $add['#type'] = 'button';
-    $add['#id'] = $add['#name'] = $element['#id'] . '-callback';
+    // TODO: This doesn't look entirely correct to build the "edit-" yourself. 
+    // It seemed to be required though to have the right triggering element in
+    // the callback
+    $add['#id'] =  $add['#name'] =  'edit-' . $element['#name'] . '-callback';
     $add['#attributes'] = array('style' => 'display:none');
     $add['#ajax'] = array(
       'params' => array(

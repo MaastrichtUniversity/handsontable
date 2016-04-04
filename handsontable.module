@@ -107,7 +107,8 @@ function handsontable_form_element_handsontable_ajax_alter(FormElement $element,
   }
   elseif ($diff < 0) {
     do {
-      // TODO: The removal of rows is only called 
+      // TODO: The removal of rows is not called at the moment. Because handsontable
+      // does not reduce the number of rows
       $last = end($element->children);
       $last->orphan();
       unset($form[count($element->children)]);
