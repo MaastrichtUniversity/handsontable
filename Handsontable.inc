@@ -52,17 +52,30 @@ class Handsontable {
 
     // Determine already set values
     $values = [];
+    $has_data = false;
     foreach (element_children($element) as $key) {
       $values[$key] = [];
       foreach (element_children($element[$key]) as $subKey) {
         if (isset($element[$key][$subKey]['#default_value'])) {
+
+          if ( !empty($element[$key][$subKey]['#default_value']) ) {
+            $has_data = true;
+          }
+
           // TODO: We probably have to handle order of columns here
           $values[$key][] = $element[$key][$subKey]['#default_value'];
         }
         else {
-          $values[$key][$subKey] = NULL;
+          $values[$key][] = NULL;
         }
       }
+    }
+
+    // TODO: I don't like this $has_data check, can we do this more pretty.
+    // It is required to let handsontable know we have an empty table, and to make the number
+    // of rows work in an empty table
+    if ( !$has_data ) {
+      $values = null;
     }
 
     // Discover columns
@@ -87,7 +100,7 @@ class Handsontable {
           'data' => [$values],
           'colHeaders' => [$colHeaders],
           'columns' => [$columns],
-          'startRows' => [$element['#rows']]
+          'startRows' => [is_numeric($element['#rows']) ? $element['#rows'] : 0]
         ]
       ],
       'type' => 'setting',
