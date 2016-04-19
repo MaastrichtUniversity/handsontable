@@ -99,6 +99,9 @@ function handsontable_form_element_handsontable_ajax_alter(FormElement $element,
   if ( $diff > 0 ) {
     do {
       $new = clone $element->children[0];
+      $new->eachDecendant(function($element) {
+        $element->default_value = NULL;
+      });
       $element->adopt($new);
       $form[] = $new->toArray();
 
