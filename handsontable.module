@@ -16,7 +16,7 @@ module_load_include('inc', 'objective_forms', 'Form');
 function handsontable_help($path) {
   switch ($path) {
     case "admin/help#handsontable":
-      return '<p>' . t("Adding handsontable form element to Drupal") . '</p>';
+      return '<p>' . t("Adding Handsontable widget to Islandora XML forms") . '</p>';
       break;
   }
   return '';
