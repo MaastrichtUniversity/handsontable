@@ -85,7 +85,7 @@ class Handsontable {
     $colHeaders = [];
     $columns = [];
     foreach ($children as $name => $child) {
-      $colHeaders[] = $child['#title'];
+      $colHeaders[] = isset($child['#title']) ? $child['#title'] : 'no-title';
       $columns[] = [
         'name' => $name,
         'type' => isset($child['#autocomplete_path']) ? 'autocomplete' : 'text',
@@ -101,7 +101,7 @@ class Handsontable {
           'data' => [$values],
           'colHeaders' => [$colHeaders],
           'columns' => [$columns],
-          'startRows' => [is_numeric($element['#rows']) ? $element['#rows'] : 0]
+          'startRows' => [isset($element['#rows']) && is_numeric($element['#rows']) ? $element['#rows'] : 0]
         ]
       ],
       'type' => 'setting',
