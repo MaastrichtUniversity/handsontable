@@ -39,6 +39,7 @@ class Handsontable {
 
     $children = array_intersect_key($element, array_flip(element_children($element)));
     $handsontable_rows = array_filter($children, ['self', 'FilterChildren']);
+    $handsontable_row = reset($handsontable_rows);
 
     if ( count($handsontable_rows) === 0 ) {
       drupal_set_message(t('Attempted to create handsontable %name without defining a handsontable_row.', array('%name' => $element['#name'])), 'error');
@@ -78,8 +79,8 @@ class Handsontable {
       $values = null;
     }
 
-    // Discover columns
-    $children = array_intersect_key($handsontable_rows[0], array_flip(element_children($handsontable_rows[0])));
+    // Discover columns, they are the childs of the first handsontable_row element
+    $children = array_intersect_key($handsontable_row, array_flip(element_children($handsontable_row)));
 
     $colHeaders = [];
     $columns = [];
