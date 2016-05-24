@@ -64,9 +64,10 @@ Drupal.behaviors.handsontable = {
         }
 
         // Initiate handsontable and add constructor options.
-        jQuery.each(settings.handsontable.names, function (i, name) {
-            var container = '#edit-' + name,
-                table = container + '-table';
+        jQuery.each(settings.handsontable.ids, function (i, id) {
+            var container = '#' + id,
+                table = container + '-table',
+                name = settings.handsontable.names[i];
 
             jQuery(table, context).once('processed', function () {
                 jQuery(table).handsontable({

@@ -97,11 +97,12 @@ class Handsontable {
     $element['#attached']['js'][] = [
       'data' => [
         'handsontable' => [
-          'names' => [$element['#name']],
-          'data' => [$values],
+          'ids'        => [$element['#id']],
+          'names'      => [$element['#name']],
+          'data'       => [$values],
           'colHeaders' => [$colHeaders],
-          'columns' => [$columns],
-          'startRows' => [isset($element['#rows']) && is_numeric($element['#rows']) ? $element['#rows'] : 0]
+          'columns'    => [$columns],
+          'startRows'  => [isset($element['#rows']) && is_numeric($element['#rows']) ? $element['#rows'] : 0]
         ]
       ],
       'type' => 'setting',
@@ -134,10 +135,11 @@ class Handsontable {
    */
   protected static function createChangeCallback(array &$element, array &$complete_form) {
     $add['#type'] = 'button';
-    // TODO: This doesn't look entirely correct to build the "edit-" yourself. 
+    $add['#id'] = $element['#id'] . '-callback';
+    // TODO: This doesn't look entirely correct to build the "edit-" yourself.
     // It seemed to be required though to have the right triggering element in
     // the callback
-    $add['#id'] =  $add['#name'] =  'edit-' . $element['#name'] . '-callback';
+    $add['#name'] =  'edit-' . $element['#name'] . '-callback';
     $add['#attributes'] = array('style' => 'display:none');
     $add['#ajax'] = array(
       'params' => array(

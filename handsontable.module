@@ -90,15 +90,20 @@ function handsontable_row_tag_process($element, &$form_state, $complete_form) {
  */
 function handsontable_form_element_handsontable_ajax_alter(FormElement $element, array &$form, array &$form_state) {
 
-  // Either remove or add rows
-  $rows = $form_state['values'][$element->getIndex()]['rows'] - 1;
+  // Get the reported number of rows by handsontable in the POST request
+  $rowsLocation = $element->getParentsArray();
+  $rowsLocation[] = 'rows';
+  $rows = drupal_array_get_nested_value($form_state['values'], $rowsLocation);
+  
+  // Get the number of children that we know right now
   $children = count($element->children);
 
+  // Either remove or add rows
   $diff = $rows - $children;
 
   if ( $diff > 0 ) {
     do {
-      $new = clone $element->children[0];
+      $new = clone reset($element->children);
       $new->eachDecendant(function($element) {
         $element->default_value = NULL;
       });
