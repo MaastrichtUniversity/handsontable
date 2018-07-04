@@ -11,11 +11,11 @@ class Handsontable {
    * @param $form_state
    */
   public static function addRequiredResources(&$form_state) {
-    drupal_add_css(drupal_get_path('module', 'handsontable') . '/bower_components/handsontable/dist/handsontable.full.min.css', array(
+    drupal_add_css(drupal_get_path('module', 'handsontable') . '/node_modules/@bower_components/handsontable/dist/handsontable.full.min.css', array(
       'group' => CSS_DEFAULT,
       'every_page' => TRUE
     ));
-    drupal_add_js(drupal_get_path('module', 'handsontable') . '/bower_components/handsontable/dist/handsontable.full.min.js', array(
+    drupal_add_js(drupal_get_path('module', 'handsontable') . '/node_modules/@bower_components/handsontable/dist/handsontable.full.min.js', array(
       'group' => CSS_DEFAULT,
       'every_page' => TRUE
     ));

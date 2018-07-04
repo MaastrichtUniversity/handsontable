@@ -33,13 +33,13 @@ Additionally, this PHP extension needs to be enabled
 * Enable the module on the Administration -> Module page.
 
 Alternatively, you can download directly from the source repository. You need to use
-[bower](http://bower.io/) to get all Javascript dependencies. Like this:
+[yarn](https://yarnpkg.com/lang/en/) to get all Javascript dependencies. Like this:
 
  ```
  cd sites/all/modules/contrib
  git clone https://github.com/MaastrichtUniversity/handsontable.git
  cd handsontable
- bower install
+ yarn install
  ```
 
 ## Configuration
