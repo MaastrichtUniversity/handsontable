@@ -1,6 +1,6 @@
 name = Handsontable
 dependencies[] = xml_forms
 description = Adding handsontable widget support to Islandora XML forms
-version = v1.1.0
+version = latest
 core = 7.x
 package = Islandora
